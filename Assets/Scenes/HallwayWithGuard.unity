@@ -2690,6 +2690,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: -8513424388201257645, guid: ae4e8e8035c599b40bd6b78a3740c56f, type: 3}
+      propertyPath: m_TagString
+      value: Ground
+      objectReference: {fileID: 0}
     - target: {fileID: -8329134849406673840, guid: ae4e8e8035c599b40bd6b78a3740c56f, type: 3}
       propertyPath: m_Layer
       value: 9
@@ -3655,7 +3659,7 @@ MonoBehaviour:
   whatIsPlayer:
     serializedVersion: 2
     m_Bits: 128
-  health: 100
+  health: 3
   walkPoint: {x: 0, y: 0, z: 0}
   walkPointRange: 25
   timeBetweenAttacks: 1
@@ -4264,6 +4268,23 @@ MonoBehaviour:
   maxBrightness: 10
   minBrightness: 0.1
   drainRate: 50
+  damage: 1
+  timeBetweenShooting: 0.5
+  spread: 0
+  range: 15
+  reloadTime: 1
+  timeBetweenShots: 0
+  allowButtonHold: 0
+  bulletsPerTap: 1
+  magazineSize: 50
+  shooting: 0
+  readyToShoot: 0
+  reloading: 0
+  MainCamera: {fileID: 278174494}
+  attackPoint: {fileID: 790613791}
+  Enemy:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!1 &793296803
 GameObject:
   m_ObjectHideFlags: 0

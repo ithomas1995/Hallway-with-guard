@@ -9,10 +9,23 @@ public class Flashlight : MonoBehaviour
     public float maxBrightness;
     public float minBrightness;
     public float drainRate;
+    public int damage;
+    public float timeBetweenShooting, spread, range, reloadTime, timeBetweenShots;
+    public bool allowButtonHold;
+    public int bulletsPerTap, magazineSize;
+    public bool shooting, readyToShoot, reloading;
+    public Camera MainCamera;
+    public Transform attackPoint;
+    public RaycastHit rayHit;
+    public LayerMask Enemy;
+    int bulletsLeft, bulletsShot;
+
     // Start is called before the first frame update
     void Start()
     {
         m_Light = GetComponent<Light>();
+        bulletsLeft = magazineSize;
+        readyToShoot = true;
     }
 
     // Update is called once per frame
@@ -37,10 +50,67 @@ public class Flashlight : MonoBehaviour
         {
             ReplaceBattery(.3f);
         }
+
+        MyInput();
     }
 
     public void ReplaceBattery(float amount)
     {
         m_Light.intensity += amount;
+    }
+
+    private void MyInput()
+    {
+        if (allowButtonHold) shooting = Input.GetKey(KeyCode.Mouse0) && m_Light.enabled;
+        else shooting = Input.GetKeyDown(KeyCode.Mouse0);
+
+        if (Input.GetKeyDown(KeyCode.R) && bulletsLeft < magazineSize && !reloading) Reload();
+
+        if (readyToShoot && shooting && !reloading && bulletsLeft > 0)
+        {
+            bulletsShot = bulletsPerTap;
+            Shoot();
+        }
+
+    }
+
+    private void Shoot()
+    {
+        readyToShoot = false;
+
+        if (Physics.Raycast(MainCamera.transform.position, MainCamera.transform.forward, out rayHit, range, Enemy))
+        {
+            Debug.Log(rayHit.collider.name);
+
+            if (rayHit.collider.CompareTag("Enemy"))
+                rayHit.collider.GetComponent<EnemyAi>().TakeDamage(damage);
+                
+        }
+
+        bulletsLeft--;
+        bulletsShot--;
+
+        Invoke("ResetShot", timeBetweenShooting);
+
+        if(bulletsShot > 0 && bulletsLeft > 0)
+        Invoke("Shoot", timeBetweenShots);
+
+    }
+
+    private void ResetShot()
+    {
+        readyToShoot = true;
+    }
+
+    private void Reload()
+    {
+        reloading = true;
+        Invoke("ReloadFinished", reloadTime);
+    }
+
+    private void ReloadFinished()
+    {
+        bulletsLeft = magazineSize;
+        reloading = false;
     }
 }

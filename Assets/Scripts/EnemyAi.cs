@@ -4,6 +4,8 @@ using UnityEngine.AI;
 
 public class EnemyAiTutorial : MonoBehaviour
 {
+    
+
     public NavMeshAgent agent;
 
     public Transform player;
@@ -12,6 +14,8 @@ public class EnemyAiTutorial : MonoBehaviour
 
     public float health;
 
+    public Vector3 startPoint;
+    bool startPointSet;
 
     //Patroling
     public Vector3 walkPoint;
@@ -107,6 +111,7 @@ public class EnemyAiTutorial : MonoBehaviour
     private void DestroyEnemy()
     {
         Destroy(gameObject);
+
     }
 
     private void OnDrawGizmosSelected()
