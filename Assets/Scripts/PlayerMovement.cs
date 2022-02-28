@@ -1,0 +1,104 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class PlayerMovement : MonoBehaviour
+{
+    public CharacterController controller;
+
+    public float speed = 12f;
+    public float gravity = -9.81f;
+    public float jumpHeight = 3.0f;
+
+    public Transform groundCheck;
+    public float groundDistance = 0.4f;
+    public LayerMask groundMask;
+
+    Vector3 velocity;
+    bool isGrounded;
+
+    public int maxHealth = 3;
+     public int currentHealth;
+
+    public AudioClip hurtClip;
+    AudioSource audioSource;
+
+    public GameObject m_GotHitScreen;
+
+ 
+
+    
+    void Start()
+    {
+        currentHealth = maxHealth;
+        audioSource= GetComponent<AudioSource>();
+       
+    }
+
+    public void PlaySound(AudioClip clip)
+    {
+        audioSource.PlayOneShot(clip);
+    }
+
+    void Update()
+    {
+        isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
+
+        if(isGrounded && velocity.y < 0)
+        {
+            velocity.y = -2f;
+        }
+
+        float x = Input.GetAxis("Horizontal");
+        float z = Input.GetAxis("Vertical");
+
+        Vector3 move = transform.right * x + transform.forward * z;
+
+        controller.Move(move * speed * Time.deltaTime);
+
+        if(Input.GetButtonDown("Jump") && isGrounded)
+        {
+            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+        }
+
+        velocity.y += gravity * Time.deltaTime;
+
+        controller.Move(velocity * Time.deltaTime);
+
+        if (currentHealth <= 0)
+        {
+            speed = 0.0f;
+            FindObjectOfType<GameManager>().EndGame();
+        }
+
+        if(m_GotHitScreen != null)
+        {
+            if (m_GotHitScreen.GetComponent<Image>().color.a>0)
+            {
+                var color = m_GotHitScreen.GetComponent<Image>().color;
+                color.a -= 0.01f;
+                m_GotHitScreen.GetComponent<Image>().color = color;
+            }
+        }
+    }
+
+    private void GotHurt()
+    {
+        var color = m_GotHitScreen.GetComponent<Image>().color;
+        color.a = 0.8f;
+
+        m_GotHitScreen.GetComponent<Image>().color = color;
+    }
+
+    public void HurtPlayer(int damage)
+   {
+       currentHealth -= damage;
+        healthbar.instance.SetValue(currentHealth / (float)maxHealth);
+        PlaySound(hurtClip);
+        GotHurt();
+
+   }
+
+
+}
